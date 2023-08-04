@@ -5,7 +5,6 @@
 
 # In[1]:
 
-
 #Importing packages
 import numpy as np
 import scipy.stats as stats
@@ -15,22 +14,16 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
 
-
 # In[2]:
-
 
 #Reading data on daily closing prices
 Daily_closing_prices = pd.read_excel('/Users/nielsduejensen/Desktop/Data_Book_Rets.xlsx', 'Sampension Exclusion Prices',header=0, index_col=0)
 
-
 # In[3]:
-
 
 Daily_closing_prices.head(3)
 
-
 # In[4]:
-
 
 #Deriving the returns from the price data
 ret = Daily_closing_prices.pct_change().dropna()
@@ -43,16 +36,14 @@ weights = [1/no_assets for i in range(no_assets)]
 #Assigning weights and returns
 ret.mul(weights, axis = "columns")
 ret.dot(weights)
-#Constructing EW-Portfolio
+#Constructing an equally weighted portfolio
 ret["EWP"] = ret.dot(weights)
 pr = pd.DataFrame([ret["EWP"]])
 portfolio_returns = pr.T
 #Defining returns of EW-Portfolio
 portfolio_returns
 
-
 # In[5]:
-
 
 portfolio_returns.std()
 portfolio_returns.mean()
@@ -62,17 +53,13 @@ squared_deviations = deviations**2
 variance = squared_deviations.mean()
 volatility = np.sqrt(variance)
 
-
 # In[6]:
-
 
 print(portfolio_returns.std())
 print(portfolio_returns.mean())
 print(volatility)
 
-
 # In[7]:
-
 
 #Plotting daily returns
 plt.figure(figsize=(14, 7))
@@ -83,18 +70,19 @@ plt.title("Danica Exclusion Portfolio Correlations")
 plt.ylabel('Daily returns')
 plt.xlabel("Time")
 
-
 # In[8]:
-
 
 portfolio_returns.shape[0]
 n_days = portfolio_returns.shape[0]
+
 ## Annualized Volatility
 annualized_vol = portfolio_returns.std()*np.sqrt(252)
+
 ## Annualized Return
 n_days = portfolio_returns.shape[0]
 return_per_day = (portfolio_returns+1).prod()**(1/n_days) - 1
 annualized_return = (portfolio_returns+1).prod()**(252/n_days) - 1
+
 #Sharpe ratio
 riskfree_rate = 0.00
 excess_return = annualized_return - riskfree_rate
@@ -103,39 +91,26 @@ print(annualized_vol)
 print(annualized_return)
 print(sharpe_ratio)
 
-
 # ## Extreme Risk Analysis
 
 # In[9]:
-
-
 wealth_index = 1000*(1+portfolio_returns).cumprod()
 wealth_index.head()
 wealth_index.plot.line()
 
-
 # In[10]:
-
-
 previous_peaks = wealth_index.cummax()
 previous_peaks.plot()
 
-
 # In[11]:
-
-
 drawdown = (wealth_index - previous_peaks)/previous_peaks
 drawdown.plot()
 
-
 # In[12]:
-
 
 drawdown.min()
 
-
 # In[13]:
-
 
 def drawdown(return_series: pd.Series):
     """Takes a time series of asset returns.
@@ -151,27 +126,14 @@ def drawdown(return_series: pd.Series):
                          "Previous Peak": previous_peaks, 
                          "Drawdown": drawdowns})
 
-
 # In[14]:
-
 
 drawdown(portfolio_returns["EWP"]).head()
 
-
 # In[16]:
-
 
 drawdown(portfolio_returns["EWP"])[["Wealth", "Previous Peak"]].head()
 
-
 # In[17]:
 
-
 drawdown(portfolio_returns["EWP"])[["Wealth", "Previous Peak"]].plot()
-
-
-# In[ ]:
-
-
-
-
